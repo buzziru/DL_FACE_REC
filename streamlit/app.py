@@ -157,8 +157,10 @@ def show_image(upload):
         col2.image(img_pil)
         for result in results:
             sex = "Male" if "Male" in result else "Female"
-            color = "blue" if sex == 'Male' else 'red'
-            col2.markdown(f'<p style="color:{color};">{result}</p>', unsafe_allow_html=True)
+            background_color = "#29a3a3" if sex == 'Male' else '#ff9999'
+            text_color = "white"
+            col2.markdown(f'<p style="background-color: {background_color}; color: {text_color}; padding: 10px; border-radius: 10px;">{result}</p>', unsafe_allow_html=True)
+
 
 
 

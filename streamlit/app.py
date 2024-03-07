@@ -6,7 +6,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import transforms
-from PIL import Image
 import cv2 
 from facenet_pytorch import InceptionResnetV1
 from retinaface import RetinaFace

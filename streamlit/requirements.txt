@@ -4,4 +4,4 @@ torch==2.2.1
 torchvision==0.17.1
 facenet-pytorch==2.5.3
 retina-face==0.0.14
-opencv-python==4.9.0.80
+opencv-python-headless==4.9.0.80

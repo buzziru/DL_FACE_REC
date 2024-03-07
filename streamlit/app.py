@@ -1,7 +1,6 @@
 import streamlit as st
 import numpy as np
 from PIL import Image
-from io import BytesIO
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -19,14 +18,6 @@ st.write(
 st.sidebar.write("## Upload an image :gear:")
 
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
-
-
-# Download the fixed image
-def save_image(img):
-    buf = BytesIO()
-    img.save(buf, format="PNG")
-    byte_im = buf.getvalue()
-    return byte_im
 
 
 class Gender_Net(nn.Module):

@@ -150,7 +150,7 @@ def show_image(upload):
                 color = (255, 0, 0)
 
             cv2.rectangle(pic, (box[0], box[1]), (box[2], box[3]), color=(0, 255, 0), thickness=1)
-            cv2.putText(pic, f"Face {idx+1}", (box[0], box[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
+            cv2.putText(pic, f"Face {idx+1}", (box[0], box[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 1)
             results.append(f"Face {idx+1} => Age: {round(age)} // Gender: {gender}, Female Probability: {gender_prob:.2f}")
 
         img_pil = Image.fromarray(pic)

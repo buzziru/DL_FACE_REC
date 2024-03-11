@@ -5,14 +5,14 @@
 #### 1) 안면 인식 에이징 이미지 데이터
   - 활용 모델: 나이 / 성별 예측 모델
   - 용량: 76.84GB
-  - 출처: AI허브(링크)
+  - 출처: [AI허브](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=71415)
   - 특징: 한 인물의 유아기부터 현재까지의 연령대별 안면 이미지와 해당 이미지 내의 안면 위치, 랜드마크 등을 라벨링하여 동일 인물의 시간의 경과에 따른 노화로 발생하는 안면 변화 정보를 담고 있는 안면 인식용 인공지능 데이터
   - train 이미지: 40,150장
   - test 이미지: 5,050장
 #### 2) FER-2013
   - 활용 모델: 감정 예측 모델
   - 용량: 56MB
-  - 출처: Kaggle(링크)
+  - 출처: [Kaggle](https://www.kaggle.com/datasets/msambare/fer2013/data?select=test)
   - 클래스(7개): angry, disgust, fear, happy, neutral, sad, surprise
   - train 이미지: 28,709장
   - test 이미지: 7,178장

@@ -60,6 +60,9 @@
   - [링크 바로가기](http://www.youtube.com/watch?v=fwqFS8A_Kf8)
 #### 3) STREAMLIT 링크
   - [링크 바로가기](https://dl-face-rec.streamlit.app/)
+#### 4) Tkinter  
+![image](https://github.com/buzziru/DL_FACE_REC/assets/152848901/2aa38017-e19b-4536-969b-fecb0c1a2436)
+
 
 
 

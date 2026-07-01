@@ -51,7 +51,6 @@
 ![2](https://github.com/buzziru/DL_FACE_REC/assets/152848901/2c635285-4a29-4b2d-8b38-38cc156279d6)  
 ![3](https://github.com/buzziru/DL_FACE_REC/assets/152848901/3b9c2eea-037a-4b91-8790-f354be7cb5bf)  
 ![4](https://github.com/buzziru/DL_FACE_REC/assets/152848901/5af51417-0161-4a8f-9092-dca538cd41db)  
-![5](https://github.com/buzziru/DL_FACE_REC/assets/152848901/5911cdc0-436f-47f9-8555-14f7f1e88fd0)  
 ![6](https://github.com/buzziru/DL_FACE_REC/assets/152848901/2ddff2f8-0167-4045-ae06-04883024a58f)  
 ![7](https://github.com/buzziru/DL_FACE_REC/assets/152848901/6f86377c-f2c5-415b-bfb9-934da029e813)  
 ![8](https://github.com/buzziru/DL_FACE_REC/assets/152848901/453e8c4c-9238-4124-a28b-b2dcbb22fcb6)  

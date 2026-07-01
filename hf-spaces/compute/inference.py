@@ -90,9 +90,11 @@ def draw(rgb, results):
         x1, y1, x2, y2 = r["box"]
         col = _MALE_BGR if r["gender"] == "Male" else _FEMALE_BGR
         cv2.rectangle(img, (x1, y1), (x2, y2), col, 2)
-        # numbered badge at the box's top-left corner; number matches the card list
+        # numbered badge just above the box (outside, so it never covers the face);
+        # number matches the card list
         rad = int(max(9, min(18, (x2 - x1) / 7)))
-        cx, cy = x1 + rad, y1 + rad
+        cx = x1 + rad
+        cy = max(rad + 1, y1 - rad - 3)
         cv2.circle(img, (cx, cy), rad, col, -1, cv2.LINE_AA)
         cv2.circle(img, (cx, cy), rad, (255, 255, 255), 1, cv2.LINE_AA)
         label = str(i)

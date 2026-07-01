@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>얼굴 나이·성별·감정 추정 — 데모</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.0.18/index.min.css" />
+<style>
+  :root{
+    --bg:#010102; --surface:#0f1011; --elevated:#141516; --deep:#18191a;
+    --border:#23252a; --border-mid:#34343a;
+    --fg:#f7f8f8; --fg-2:#d0d6e0; --muted:#8a8f98; --tertiary:#62666d;
+    --accent:#5e6ad2; --accent-light:#828fff;
+    --male:#5b8def; --female:#e06b8b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);}
+  body{
+    font-family:'Pretendard',system-ui,-apple-system,sans-serif;
+    color:var(--fg);-webkit-font-smoothing:antialiased;
+    line-height:1.55;letter-spacing:-0.01em;word-break:keep-all;
+  }
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+  .wrap{max-width:920px;margin:0 auto;padding:26px 22px 34px;}
+
+  header h1{font-size:20px;font-weight:600;letter-spacing:-0.03em;margin:0;}
+  header p{font-size:13px;color:var(--muted);margin:6px 0 0;}
+  .pills{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 0;}
+  .pills span{background:var(--elevated);border:1px solid var(--border);border-radius:9999px;
+    padding:5px 11px;font-size:11px;color:var(--fg-2);}
+
+  .sec-label{font-size:10.5px;letter-spacing:.14em;color:var(--tertiary);text-transform:uppercase;
+    margin:26px 0 10px;}
+
+  /* picker: sample thumbs + upload */
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:10px;}
+  .thumb{position:relative;border:1px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;
+    background:var(--surface);padding:0;text-align:left;font-family:inherit;transition:border-color .14s,transform .14s;}
+  .thumb img{display:block;width:100%;height:90px;object-fit:cover;background:var(--deep);}
+  .thumb .cap{padding:7px 9px;}
+  .thumb .cap b{display:block;font-size:11.5px;font-weight:600;color:var(--fg);letter-spacing:-0.02em;}
+  .thumb .cap i{display:block;font-size:10px;color:var(--tertiary);font-style:normal;margin-top:2px;}
+  .thumb:hover{border-color:var(--border-mid);transform:translateY(-1px);}
+  .thumb.active{border-color:var(--accent);}
+  .thumb.active::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px var(--accent);border-radius:11px;pointer-events:none;}
+
+  .upload{margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    border:1px dashed var(--border-mid);border-radius:11px;padding:14px 16px;background:var(--surface);}
+  .upload label{display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    background:var(--accent);color:#fff;border-radius:8px;padding:8px 15px;font-size:13px;font-weight:500;transition:background .14s;}
+  .upload label:hover{background:var(--accent-light);}
+  .upload input{display:none;}
+  .upload .hint{font-size:11.5px;color:var(--tertiary);}
+
+  /* result */
+  .result{margin-top:14px;display:grid;grid-template-columns:1.4fr 1fr;gap:14px;align-items:start;}
+  @media(max-width:640px){.result{grid-template-columns:1fr;}}
+  .stage{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--deep);position:relative;min-height:160px;}
+  .stage img{display:block;width:100%;height:auto;}
+  .stage .loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:10px;background:rgba(1,1,2,.72);color:var(--fg-2);font-size:12.5px;text-align:center;padding:20px;}
+  .spinner{width:26px;height:26px;border:3px solid var(--border-mid);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .panel{border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:14px 15px;}
+  .panel-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:11px;}
+  .panel-h h3{font-size:13px;font-weight:600;letter-spacing:-0.02em;margin:0;}
+  .panel-h .n{font-size:11px;color:var(--tertiary);}
+  .faces{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow:auto;}
+  .face{display:flex;align-items:center;gap:11px;padding:9px 11px;border:1px solid var(--border);border-radius:10px;background:var(--elevated);}
+  .face .tag{width:26px;height:26px;flex:none;border-radius:7px;display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:600;color:#fff;font-family:'JetBrains Mono',monospace;}
+  .face .info{min-width:0;flex:1;}
+  .face .info .top{font-size:13px;font-weight:500;color:var(--fg);}
+  .face .info .sub{font-size:11px;color:var(--muted);margin-top:1px;}
+  .g-male{color:var(--male);} .g-female{color:var(--female);}
+
+  .note{font-size:11.5px;color:var(--tertiary);margin:16px 0 0;line-height:1.6;}
+  .note a{color:var(--muted);}
+  .err{color:var(--female);font-size:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>얼굴 나이·성별·감정 추정</h1>
+    <p>RetinaFace로 얼굴을 검출한 뒤, 검출된 얼굴마다 나이(회귀)·성별·감정(6클래스)을 동시에 추정합니다.</p>
+    <div class="pills">
+      <span>RetinaFace 검출</span><span>나이 회귀 · InceptionResnetV1</span>
+      <span>성별 · CNN</span><span>감정 6클래스 · CNN</span><span class="mono">ONNX Runtime</span>
+    </div>
+  </header>
+
+  <p class="sec-label">샘플 이미지 — 클릭하면 사전 추론 결과가 표시됩니다</p>
+  <div class="thumbs" id="thumbs"></div>
+
+  <div class="upload">
+    <label>직접 이미지 올리기<input type="file" id="file" accept="image/*"></label>
+    <span class="hint">업로드 시 Hugging Face에서 ONNX 모델이 실시간 추론합니다 · 첫 호출은 서버 대기(콜드스타트)로 30~60초 걸릴 수 있습니다.</span>
+  </div>
+
+  <div class="result">
+    <div class="stage" id="stage"><img id="stage-img" alt="추론 결과 이미지"></div>
+    <div class="panel">
+      <div class="panel-h"><h3 id="res-title">검출 결과</h3><span class="n mono" id="res-n"></span></div>
+      <div class="faces" id="faces"></div>
+    </div>
+  </div>
+
+  <p class="note">
+    검출은 RetinaFace(ONNX), 나이·성별·감정은 원본 프로젝트의 학습 모델을 ONNX로 변환해 추론합니다.
+    감정은 FER-2013에서 희소 클래스(disgust)를 제외한 6클래스로 학습되었습니다.
+    측면 각도·저해상도 얼굴에서는 정확도가 떨어질 수 있습니다 —
+    <a href="https://github.com/buzziru/DL_FACE_REC" target="_blank" rel="noopener">GitHub 저장소 ↗</a>
+  </p>
+</div>
+
+<script type="module">
+const API = "https://ingyoun-face-rec-api.hf.space";
+const GENDER_KR = { Male: "남성", Female: "여성" };
+const EMOTION_KR = { Angry:"화남", Fear:"공포", Happy:"행복", Neutral:"무표정", Sad:"슬픔", Surprise:"놀람" };
+
+// 사전 추론 샘플 (로컬 파이프라인으로 계산해 내장 — 서버 호출 없음)
+const SAMPLES = [
+  {id:"group-women", label:"여성 그룹", desc:"5인 · 전원 여성", faces:[
+    {age:29,gender:"Female",emotion:"Happy"},{age:23,gender:"Female",emotion:"Happy"},
+    {age:21,gender:"Female",emotion:"Neutral"},{age:21,gender:"Female",emotion:"Neutral"},
+    {age:27,gender:"Female",emotion:"Happy"}]},
+  {id:"students", label:"대학생 단체", desc:"9인 다중 검출", faces:[
+    {age:18,gender:"Male",emotion:"Happy"},{age:19,gender:"Female",emotion:"Happy"},
+    {age:11,gender:"Male",emotion:"Neutral"},{age:17,gender:"Male",emotion:"Neutral"},
+    {age:20,gender:"Male",emotion:"Neutral"},{age:18,gender:"Female",emotion:"Happy"},
+    {age:19,gender:"Male",emotion:"Happy"},{age:22,gender:"Female",emotion:"Happy"},
+    {age:18,gender:"Male",emotion:"Neutral"}]},
+  {id:"surprise", label:"놀란 커플", desc:"감정: 놀람", faces:[
+    {age:24,gender:"Male",emotion:"Surprise"},{age:19,gender:"Female",emotion:"Surprise"}]},
+  {id:"couple", label:"가족", desc:"나이 6~22 혼합", faces:[
+    {age:18,gender:"Male",emotion:"Neutral"},{age:22,gender:"Female",emotion:"Happy"},
+    {age:6,gender:"Female",emotion:"Neutral"},{age:8,gender:"Female",emotion:"Neutral"}]},
+  {id:"woman", label:"인물 · 여성", desc:"단일 얼굴", faces:[
+    {age:20,gender:"Female",emotion:"Neutral"}]},
+  {id:"child", label:"초등학생", desc:"저연령대", faces:[
+    {age:9,gender:"Male",emotion:"Happy"},{age:12,gender:"Female",emotion:"Neutral"},
+    {age:14,gender:"Male",emotion:"Neutral"},{age:16,gender:"Male",emotion:"Neutral"},
+    {age:16,gender:"Female",emotion:"Happy"},{age:11,gender:"Male",emotion:"Neutral"}]},
+];
+
+const $ = (id) => document.getElementById(id);
+const stageImg = $("stage-img"), stage = $("stage"), facesEl = $("faces");
+
+function renderFaces(faces){
+  $("res-n").textContent = `얼굴 ${faces.length}명`;
+  facesEl.innerHTML = faces.map((f,i)=>{
+    const male = f.gender === "Male";
+    const col = male ? "var(--male)" : "var(--female)";
+    const gcls = male ? "g-male" : "g-female";
+    return `<div class="face">
+      <div class="tag" style="background:${col}">${i+1}</div>
+      <div class="info">
+        <div class="top">${f.age}세 · <span class="${gcls}">${GENDER_KR[f.gender]||f.gender}</span></div>
+        <div class="sub">감정 · ${EMOTION_KR[f.emotion]||f.emotion}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function showLoading(msg){
+  const d = document.createElement("div");
+  d.className = "loading"; d.id = "loading";
+  d.innerHTML = `<div class="spinner"></div><div>${msg}</div>`;
+  stage.appendChild(d);
+}
+function hideLoading(){ const d = $("loading"); if(d) d.remove(); }
+
+// 샘플 갤러리
+$("thumbs").innerHTML = SAMPLES.map((s,i)=>`
+  <button class="thumb${i===0?' active':''}" data-i="${i}">
+    <img src="samples/${s.id}.jpg" alt="${s.label}">
+    <span class="cap"><b>${s.label}</b><i>${s.desc}</i></span>
+  </button>`).join("");
+
+function selectSample(i){
+  document.querySelectorAll(".thumb").forEach((t,j)=>t.classList.toggle("active", j===i));
+  const s = SAMPLES[i];
+  hideLoading();
+  stageImg.src = `samples/${s.id}_annot.jpg`;
+  $("res-title").textContent = s.label;
+  renderFaces(s.faces);
+  syncHeight();
+}
+document.querySelectorAll(".thumb").forEach(t=>t.addEventListener("click",()=>selectSample(+t.dataset.i)));
+
+// 업로드 → HF Gradio REST API 직접 호출
+// @gradio/client는 /config를 credentials:'include'로 호출해 HF Space의 CORS(*)에
+// 막힘 → 자격증명 없는 수동 fetch 3단계(업로드→호출→SSE)로 직접 호출한다.
+async function runInference(file){
+  const fd = new FormData();
+  fd.append("files", file, file.name);
+  const up = await fetch(API + "/gradio_api/upload", { method:"POST", body:fd, credentials:"omit" });
+  if(!up.ok) throw new Error("업로드 실패 (" + up.status + ")");
+  const paths = await up.json();
+
+  const fileData = { path: paths[0], meta:{ _type:"gradio.FileData" }, orig_name:file.name, url: API + "/gradio_api/file=" + paths[0] };
+  const call = await fetch(API + "/gradio_api/call/predict", {
+    method:"POST", credentials:"omit",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ data:[fileData] }),
+  });
+  if(!call.ok) throw new Error("추론 요청 실패 (" + call.status + ")");
+  const { event_id } = await call.json();
+
+  const ev = await fetch(API + "/gradio_api/call/predict/" + event_id, { credentials:"omit" });
+  if(!ev.ok) throw new Error("결과 수신 실패 (" + ev.status + ")");
+  const text = await ev.text();
+  let payload = null;
+  for(const block of text.split("\n\n")){
+    if(block.includes("event: error")) throw new Error("서버 추론 오류");
+    if(block.includes("event: complete")){
+      const m = block.match(/data: (.*)$/s);
+      if(m){ payload = JSON.parse(m[1]); break; }
+    }
+  }
+  if(!payload) throw new Error("예상치 못한 응답 형식");
+  return { img: payload[0], faces: payload[1] || [] };
+}
+
+$("file").addEventListener("change", async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  document.querySelectorAll(".thumb").forEach(t=>t.classList.remove("active"));
+  stageImg.src = URL.createObjectURL(file);
+  $("res-title").textContent = "실시간 추론";
+  $("res-n").textContent = "";
+  facesEl.innerHTML = "";
+  showLoading("ONNX 모델 추론 중…\n첫 호출은 서버 준비로 최대 1분 걸릴 수 있습니다.");
+  syncHeight();
+  try{
+    const { img, faces } = await runInference(file);
+    hideLoading();
+    if(img && img.url) stageImg.src = img.url;
+    renderFaces(Array.isArray(faces) ? faces : []);
+  }catch(err){
+    hideLoading();
+    facesEl.innerHTML = `<div class="err">추론 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.<br>(${(err&&err.message)||err})</div>`;
+  }
+  syncHeight();
+});
+
+// 높이 동기화 (부모 프레임과)
+let lastH = 0;
+function syncHeight(){
+  const h = document.querySelector(".wrap").offsetHeight + 8;
+  if(h && h !== lastH){ lastH = h; parent.postMessage({type:"face-demo-height", height:h}, "*"); }
+}
+window.addEventListener("load", ()=>{ selectSample(0); syncHeight(); });
+new ResizeObserver(syncHeight).observe(document.querySelector(".wrap"));
+stageImg.addEventListener("load", syncHeight);
+selectSample(0);
+</script>
+</body>
+</html>

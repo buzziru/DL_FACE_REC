@@ -58,10 +58,14 @@
 ![9](https://github.com/buzziru/DL_FACE_REC/assets/152848901/b7af4526-c79c-46a1-b15f-765d028386db)  
 #### 2) 영상
   - [링크 바로가기](http://www.youtube.com/watch?v=fwqFS8A_Kf8)
-#### 3) STREAMLIT 링크
-  - [링크 바로가기](https://dl-face-rec.streamlit.app/)
+#### 3) 라이브 데모 (Hugging Face)
+  - [인터랙티브 데모](https://huggingface.co/spaces/ingyoun/face-rec-demo) — 샘플 결과 내장 + 업로드 시 ONNX 실시간 추론
+  - 기존 Streamlit 데모(GitHub 모델 직접 로드)는 추론 지연으로 대체됨
 #### 4) Tkinter  
 ![image](https://github.com/buzziru/DL_FACE_REC/assets/152848901/2aa38017-e19b-4536-969b-fecb0c1a2436)
+
+## 6. 모델 가중치 & 데모 소스
+레포 경량화를 위해 학습 체크포인트(`.pth`/`.h5`)와 ONNX 변환본은 Hugging Face 모델 레포에 보관합니다 — [ingyoun/dl-face-rec](https://huggingface.co/ingyoun/dl-face-rec) (`checkpoints/`, `onnx/`). 데모(static + compute space) 소스는 `hf-spaces/`.
 
 
 

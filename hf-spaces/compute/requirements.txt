@@ -1,0 +1,4 @@
+onnxruntime
+uniface
+opencv-python-headless
+pillow

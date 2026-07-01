@@ -82,17 +82,23 @@ _FEMALE_BGR = (90, 90, 240)
 
 
 def draw(rgb, results):
-    """Draw boxes + labels on a copy of rgb (returns RGB uint8)."""
+    """Draw gender-colored boxes with a numbered badge per face (details go in
+    the side panel). A badge avoids the label overlap that full text captions
+    cause when faces are packed close together. Returns RGB uint8."""
     img = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR).copy()
-    for r in results:
+    for i, r in enumerate(results, 1):
         x1, y1, x2, y2 = r["box"]
         col = _MALE_BGR if r["gender"] == "Male" else _FEMALE_BGR
         cv2.rectangle(img, (x1, y1), (x2, y2), col, 2)
-        label = f'{r["age"]} {r["gender"]} {r["emotion"]}'
-        fs = max(0.4, min(0.8, (x2 - x1) / 200))
-        th = max(1, int(fs * 2))
+        # numbered badge at the box's top-left corner; number matches the card list
+        rad = int(max(9, min(18, (x2 - x1) / 7)))
+        cx, cy = x1 + rad, y1 + rad
+        cv2.circle(img, (cx, cy), rad, col, -1, cv2.LINE_AA)
+        cv2.circle(img, (cx, cy), rad, (255, 255, 255), 1, cv2.LINE_AA)
+        label = str(i)
+        fs = rad / 14.0
+        th = max(1, int(round(rad / 9)))
         (tw, tht), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, fs, th)
-        ytop = max(0, y1 - tht - 6)
-        cv2.rectangle(img, (x1, ytop), (x1 + tw + 4, y1), col, -1)
-        cv2.putText(img, label, (x1 + 2, y1 - 4), cv2.FONT_HERSHEY_SIMPLEX, fs, (255, 255, 255), th, cv2.LINE_AA)
+        cv2.putText(img, label, (cx - tw // 2, cy + tht // 2),
+                    cv2.FONT_HERSHEY_SIMPLEX, fs, (255, 255, 255), th, cv2.LINE_AA)
     return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)

@@ -76,19 +76,21 @@ class FacePipeline:
         return out
 
 
-# blue for male, red/pink for female (BGR for cv2 drawing)
-_MALE_BGR = (255, 120, 40)
-_FEMALE_BGR = (90, 90, 240)
+# one color for every face: the site accent #1F77B4 (BGR for cv2 drawing).
+# Gender is read from the side list text, not from color (portfolio decision 0041).
+_BOX_BGR = (180, 119, 31)
+# badge outline/number: the site paper #F9FAF8 instead of pure white
+_PAPER_BGR = (248, 250, 249)
 
 
 def draw(rgb, results):
-    """Draw gender-colored boxes with a numbered badge per face (details go in
+    """Draw one-color boxes with a numbered badge per face (details go in
     the side panel). A badge avoids the label overlap that full text captions
     cause when faces are packed close together. Returns RGB uint8."""
     img = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR).copy()
     for i, r in enumerate(results, 1):
         x1, y1, x2, y2 = r["box"]
-        col = _MALE_BGR if r["gender"] == "Male" else _FEMALE_BGR
+        col = _BOX_BGR
         cv2.rectangle(img, (x1, y1), (x2, y2), col, 2)
         # numbered badge just above the box (outside, so it never covers the face);
         # number matches the card list
@@ -96,11 +98,11 @@ def draw(rgb, results):
         cx = x1 + rad
         cy = max(rad + 1, y1 - rad - 3)
         cv2.circle(img, (cx, cy), rad, col, -1, cv2.LINE_AA)
-        cv2.circle(img, (cx, cy), rad, (255, 255, 255), 1, cv2.LINE_AA)
+        cv2.circle(img, (cx, cy), rad, _PAPER_BGR, 1, cv2.LINE_AA)
         label = str(i)
         fs = rad / 14.0
         th = max(1, int(round(rad / 9)))
         (tw, tht), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, fs, th)
         cv2.putText(img, label, (cx - tw // 2, cy + tht // 2),
-                    cv2.FONT_HERSHEY_SIMPLEX, fs, (255, 255, 255), th, cv2.LINE_AA)
+                    cv2.FONT_HERSHEY_SIMPLEX, fs, _PAPER_BGR, th, cv2.LINE_AA)
     return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)

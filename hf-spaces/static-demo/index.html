@@ -7,81 +7,82 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-<link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.0.18/index.min.css" />
+
 <style>
   :root{
-    --bg:#010102; --surface:#0f1011; --elevated:#141516; --deep:#18191a;
-    --border:#23252a; --border-mid:#34343a;
-    --fg:#f7f8f8; --fg-2:#d0d6e0; --muted:#8a8f98; --tertiary:#62666d;
-    --accent:#5e6ad2; --accent-light:#828fff;
-    --male:#5b8def; --female:#e06b8b;
+    --paper:#F9FAF8; --panel:#E7E9E4; --accent-wash:#DDEAF4;
+    --ink:#1C2124; --ink-2:#41484C; --ink-3:#5A6266;
+    --accent:#1F77B4; --accent-text:#175F96;
+    --mark-base:#757C81; --rule:#C5CAC6;
+    --font-sans:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    --font-code:ui-monospace,'Cascadia Mono',Consolas,monospace;
+    color-scheme:light;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--bg);}
+  html,body{margin:0;padding:0;background:var(--paper);}
   body{
-    font-family:'Pretendard',system-ui,-apple-system,sans-serif;
-    color:var(--fg);-webkit-font-smoothing:antialiased;
-    line-height:1.55;letter-spacing:-0.01em;word-break:keep-all;
+    font-family:var(--font-sans);color:var(--ink-2);
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    line-height:1.55;word-break:keep-all;
   }
-  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+  ::selection{background:var(--accent-wash);}
+  :focus{outline:none;}
+  :focus-visible{outline:2px solid var(--accent-text);outline-offset:2px;border-radius:2px;}
+  a{color:var(--accent-text);text-underline-offset:2px;transition:color .15s ease-out;}
+  a:hover{color:var(--ink);}
+  .mono{font-family:var(--font-code);}
+  .num{font-variant-numeric:tabular-nums;}
+  button{font-family:inherit;}
+  /* 데모 공통: 탭(선택 상태는 파랑 밑줄) */
+  @media (prefers-reduced-motion:reduce){*{transition-duration:0s !important;}}
   .wrap{max-width:920px;margin:0 auto;padding:26px 22px 34px;}
 
-  header h1{font-size:20px;font-weight:600;letter-spacing:-0.03em;margin:0;}
-  header p{font-size:13px;color:var(--muted);margin:6px 0 0;}
-  .pills{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 0;}
-  .pills span{background:var(--elevated);border:1px solid var(--border);border-radius:9999px;
-    padding:5px 11px;font-size:11px;color:var(--fg-2);}
+  header h1{font-size:20px;font-weight:650;color:var(--ink);margin:0;line-height:1.35;}
+  header p{font-size:15px;color:var(--ink-2);margin:6px 0 0;line-height:1.65;}
+  .pills{display:flex;flex-wrap:wrap;gap:4px 18px;margin:10px 0 0;font-size:14px;color:var(--ink-3);}
 
-  .sec-label{font-size:10.5px;letter-spacing:.14em;color:var(--tertiary);text-transform:uppercase;
-    margin:26px 0 10px;}
+  .sec-label{font-size:15px;font-weight:650;color:var(--ink);margin:28px 0 10px;}
 
   /* picker: sample thumbs + upload */
-  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:10px;}
-  .thumb{position:relative;border:1px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;
-    background:var(--surface);padding:0;text-align:left;font-family:inherit;transition:border-color .14s,transform .14s;}
-  .thumb img{display:block;width:100%;height:90px;object-fit:cover;background:var(--deep);}
-  .thumb .cap{padding:7px 9px;}
-  .thumb .cap b{display:block;font-size:11.5px;font-weight:600;color:var(--fg);letter-spacing:-0.02em;}
-  .thumb .cap i{display:block;font-size:10px;color:var(--tertiary);font-style:normal;margin-top:2px;}
-  .thumb:hover{border-color:var(--border-mid);transform:translateY(-1px);}
-  .thumb.active{border-color:var(--accent);}
-  .thumb.active::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px var(--accent);border-radius:11px;pointer-events:none;}
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:12px;}
+  .thumb{position:relative;border:0;cursor:pointer;background:none;padding:0;text-align:start;}
+  .thumb img{display:block;width:100%;height:90px;object-fit:cover;border:1px solid var(--rule);}
+  .thumb .cap{display:block;padding:6px 0 0;}
+  .thumb .cap b{display:block;font-size:14px;font-weight:600;color:var(--ink);}
+  .thumb .cap i{display:block;font-size:13px;color:var(--ink-3);font-style:normal;margin-top:1px;}
+  .thumb:hover img{border-color:var(--mark-base);}
+  .thumb.active img{border:2px solid var(--accent);}
+  .thumb.active .cap b{color:var(--accent-text);}
 
-  .upload{margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
-    border:1px dashed var(--border-mid);border-radius:11px;padding:14px 16px;background:var(--surface);}
-  .upload label{display:inline-flex;align-items:center;gap:8px;cursor:pointer;
-    background:var(--accent);color:#fff;border-radius:8px;padding:8px 15px;font-size:13px;font-weight:500;transition:background .14s;}
-  .upload label:hover{background:var(--accent-light);}
-  .upload input{display:none;}
-  .upload .hint{font-size:11.5px;color:var(--tertiary);}
+  .upload{margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .upload label{display:inline-flex;align-items:center;cursor:pointer;
+    background:var(--ink);color:var(--paper);border-radius:2px;padding:12px 20px;font-size:15px;font-weight:600;line-height:1;transition:background .15s ease-out;}
+  .upload label:hover{background:var(--ink-2);}
+  .upload label:focus-within{outline:2px solid var(--accent-text);outline-offset:2px;}
+  .upload input{position:absolute;opacity:0;width:1px;height:1px;}
+  .upload .hint{font-size:13px;color:var(--ink-3);flex:1;min-width:240px;}
 
   /* result */
-  .result{margin-top:14px;display:grid;grid-template-columns:1.4fr 1fr;gap:14px;align-items:start;}
+  .result{margin-top:22px;display:grid;grid-template-columns:1.4fr 1fr;gap:28px;align-items:start;}
   @media(max-width:640px){.result{grid-template-columns:1fr;}}
-  .stage{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--deep);position:relative;min-height:160px;}
+  .stage{border:1px solid var(--rule);overflow:hidden;position:relative;min-height:160px;}
   .stage img{display:block;width:100%;height:auto;}
   .stage .loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:10px;background:rgba(1,1,2,.72);color:var(--fg-2);font-size:12.5px;text-align:center;padding:20px;}
-  .spinner{width:26px;height:26px;border:3px solid var(--border-mid);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
+    gap:10px;background:rgba(249,250,248,.86);color:var(--ink);font-size:15px;padding:20px;white-space:pre-line;}
 
-  .panel{border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:14px 15px;}
-  .panel-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:11px;}
-  .panel-h h3{font-size:13px;font-weight:600;letter-spacing:-0.02em;margin:0;}
-  .panel-h .n{font-size:11px;color:var(--tertiary);}
-  .faces{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow:auto;}
-  .face{display:flex;align-items:center;gap:11px;padding:9px 11px;border:1px solid var(--border);border-radius:10px;background:var(--elevated);}
-  .face .tag{width:26px;height:26px;flex:none;border-radius:7px;display:flex;align-items:center;justify-content:center;
-    font-size:11px;font-weight:600;color:#fff;font-family:'JetBrains Mono',monospace;}
+  .panel-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px;}
+  .panel-h h3{font-size:15px;font-weight:650;color:var(--ink);margin:0;}
+  .panel-h .n{font-size:14px;color:var(--ink-3);}
+  .faces{display:flex;flex-direction:column;max-height:340px;overflow:auto;border-top:1px solid var(--ink);}
+  .face{display:flex;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px solid var(--rule);}
+  .face .tag{width:26px;height:26px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:650;color:var(--paper);background:var(--accent);font-variant-numeric:tabular-nums;}
   .face .info{min-width:0;flex:1;}
-  .face .info .top{font-size:13px;font-weight:500;color:var(--fg);}
-  .face .info .sub{font-size:11px;color:var(--muted);margin-top:1px;}
-  .g-male{color:var(--male);} .g-female{color:var(--female);}
+  .face .info .top{font-size:15px;font-weight:600;color:var(--ink);}
+  .face .info .sub{font-size:14px;color:var(--ink-2);margin-top:1px;}
 
-  .note{font-size:11.5px;color:var(--tertiary);margin:16px 0 0;line-height:1.6;}
-  .note a{color:var(--muted);}
-  .err{color:var(--female);font-size:12px;}
+  .note{font-size:13px;color:var(--ink-3);margin:20px 0 0;line-height:1.65;}
+  .err{color:var(--ink);font-size:15px;padding:10px 0;}
 </style>
 </head>
 <body>
@@ -90,8 +91,8 @@
     <h1>얼굴 나이·성별·감정 추정</h1>
     <p>RetinaFace로 얼굴을 검출한 뒤, 검출된 얼굴마다 나이(회귀)·성별·감정(6클래스)을 동시에 추정합니다.</p>
     <div class="pills">
-      <span>RetinaFace 검출</span><span>나이 회귀 · InceptionResnetV1</span>
-      <span>성별 · CNN</span><span>감정 6클래스 · CNN</span><span class="mono">ONNX Runtime</span>
+      <span>RetinaFace 검출</span><span>나이 회귀, InceptionResnetV1</span>
+      <span>성별, CNN</span><span>감정 6클래스, CNN</span><span>ONNX Runtime</span>
     </div>
   </header>
 
@@ -100,13 +101,13 @@
 
   <div class="upload">
     <label>직접 이미지 올리기<input type="file" id="file" accept="image/*"></label>
-    <span class="hint">업로드 시 Hugging Face에서 ONNX 모델이 실시간 추론합니다 · 첫 호출은 서버 대기(콜드스타트)로 30~60초 걸릴 수 있습니다.</span>
+    <span class="hint">업로드 시 Hugging Face에서 ONNX 모델이 실시간 추론합니다. 첫 호출은 서버 대기(콜드스타트)로 30~60초 걸릴 수 있습니다.</span>
   </div>
 
   <div class="result">
     <div class="stage" id="stage"><img id="stage-img" alt="추론 결과 이미지"></div>
     <div class="panel">
-      <div class="panel-h"><h3 id="res-title">검출 결과</h3><span class="n mono" id="res-n"></span></div>
+      <div class="panel-h"><h3 id="res-title">검출 결과</h3><span class="n" id="res-n"></span></div>
       <div class="faces" id="faces"></div>
     </div>
   </div>
@@ -115,7 +116,7 @@
     검출은 RetinaFace(ONNX), 나이·성별·감정은 원본 프로젝트의 학습 모델을 ONNX로 변환해 추론합니다.
     감정은 FER-2013에서 희소 클래스(disgust)를 제외한 6클래스로 학습되었습니다.
     측면 각도·저해상도 얼굴에서는 정확도가 떨어질 수 있습니다 —
-    <a href="https://github.com/buzziru/DL_FACE_REC" target="_blank" rel="noopener">GitHub 저장소 ↗</a>
+    <a href="https://github.com/buzziru/DL_FACE_REC" target="_blank" rel="noopener">GitHub 저장소</a>
   </p>
 </div>
 
@@ -126,7 +127,7 @@ const EMOTION_KR = { Angry:"화남", Fear:"공포", Happy:"행복", Neutral:"무
 
 // 사전 추론 샘플 (로컬 파이프라인으로 계산해 내장 — 서버 호출 없음)
 const SAMPLES = [
-  {id:"group-women", label:"여성 그룹", desc:"5인 · 전원 여성", faces:[
+  {id:"group-women", label:"여성 그룹", desc:"5인, 전원 여성", faces:[
     {age:29,gender:"Female",emotion:"Happy"},{age:23,gender:"Female",emotion:"Happy"},
     {age:21,gender:"Female",emotion:"Neutral"},{age:21,gender:"Female",emotion:"Neutral"},
     {age:27,gender:"Female",emotion:"Happy"}]},
@@ -141,7 +142,7 @@ const SAMPLES = [
   {id:"couple", label:"가족", desc:"나이 6~22 혼합", faces:[
     {age:18,gender:"Male",emotion:"Neutral"},{age:22,gender:"Female",emotion:"Happy"},
     {age:6,gender:"Female",emotion:"Neutral"},{age:8,gender:"Female",emotion:"Neutral"}]},
-  {id:"woman", label:"인물 · 여성", desc:"단일 얼굴", faces:[
+  {id:"woman", label:"인물, 여성", desc:"단일 얼굴", faces:[
     {age:20,gender:"Female",emotion:"Neutral"}]},
   {id:"child", label:"초등학생", desc:"저연령대", faces:[
     {age:9,gender:"Male",emotion:"Happy"},{age:12,gender:"Female",emotion:"Neutral"},
@@ -155,14 +156,11 @@ const stageImg = $("stage-img"), stage = $("stage"), facesEl = $("faces");
 function renderFaces(faces){
   $("res-n").textContent = `얼굴 ${faces.length}명`;
   facesEl.innerHTML = faces.map((f,i)=>{
-    const male = f.gender === "Male";
-    const col = male ? "var(--male)" : "var(--female)";
-    const gcls = male ? "g-male" : "g-female";
     return `<div class="face">
-      <div class="tag" style="background:${col}">${i+1}</div>
+      <div class="tag">${i+1}</div>
       <div class="info">
-        <div class="top">${f.age}세 · <span class="${gcls}">${GENDER_KR[f.gender]||f.gender}</span></div>
-        <div class="sub">감정 · ${EMOTION_KR[f.emotion]||f.emotion}</div>
+        <div class="top">${f.age}세, ${GENDER_KR[f.gender]||f.gender}</div>
+        <div class="sub">감정: ${EMOTION_KR[f.emotion]||f.emotion}</div>
       </div>
     </div>`;
   }).join("");
@@ -171,7 +169,7 @@ function renderFaces(faces){
 function showLoading(msg){
   const d = document.createElement("div");
   d.className = "loading"; d.id = "loading";
-  d.innerHTML = `<div class="spinner"></div><div>${msg}</div>`;
+  d.textContent = msg;
   stage.appendChild(d);
 }
 function hideLoading(){ const d = $("loading"); if(d) d.remove(); }
